@@ -27,7 +27,6 @@ on:
   pull_request:
     types: [opened, reopened, synchronize]
 
-jobs:
   sonarqube-analysis:
     runs-on: ubuntu-latest
     steps:
