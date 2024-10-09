@@ -20,3 +20,29 @@ jobs:
         
       - name: Run python app
         run: python app.py
+        name: SonarQube Analysis
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+jobs:
+  sonarqube-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: Install SonarQube Scanner for Node.js
+        run: npm install -g sonarscanner
+      - name: Configure SonarQube Scanner
+        run: sonarscanner configure -s https://your-sonarqube-server -l .sonar-project.properties
+      - name: Run SonarQube Analysis
+        run: sonarscanner -Dsonar.projectVersion=${GITHUB_REF_NAME} -Dsonar.sourceEncoding=UTF-8 -Dsonar.sources=src -Dsonar.exclusions=test/**/*
+      - name: Upload SonarQube Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: sonar-report
+          path: .sonar-project.properties
